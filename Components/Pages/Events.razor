@@ -1,0 +1,94 @@
+@page "/events"
+@using EventPulse.Data
+@using EventPulse.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>All Events - EventPulse</PageTitle>
+
+<div class="ep-page-header">
+    <h2 class="ep-page-title">All Events</h2>
+    <p class="ep-page-subtitle">Browse and register for upcoming events</p>
+</div>
+
+@if (loading)
+{
+    <div class="ep-spinner">
+        <div class="ep-spinner-circle"></div>
+        <span>Loading events...</span>
+    </div>
+}
+else if (!events.Any())
+{
+    <p class="text-muted">No events found.</p>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var ev in events.OrderBy(e => e.Date))
+        {
+            var confirmed = ev.Rsvps.Count(r => !r.IsWaitlisted);
+            var waitlisted = ev.Rsvps.Count(r => r.IsWaitlisted);
+            var percentFull = ev.MaxCapacity > 0
+                ? Math.Min(100, (int)((double)confirmed / ev.MaxCapacity * 100))
+                : 0;
+            var isFull = confirmed >= ev.MaxCapacity;
+
+            <div class="col-lg-4 col-md-6">
+                <div class="ep-event-card">
+                    <div class="ep-event-card-header">
+                        <h4 class="mb-1" style="font-size:1.05rem; font-weight:700;">@ev.Title</h4>
+                        <small><i class="bi bi-calendar3 me-1"></i>@ev.Date.ToString("MMM dd, yyyy - h:mm tt")</small>
+                    </div>
+                    <div class="ep-event-card-body">
+                        <p class="text-muted" style="font-size:0.875rem;">
+                            @(ev.Description.Length > 120 ? ev.Description.Substring(0, 120) + "..." : ev.Description)
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-1" style="font-size:0.8rem;">
+                            <span class="fw-600">@confirmed / @ev.MaxCapacity seats filled</span>
+                            @if (waitlisted > 0)
+                            {
+                                <span class="text-ep-warning">@waitlisted waiting</span>
+                            }
+                        </div>
+                        <div class="ep-capacity-bar">
+                            <div class="ep-capacity-fill"
+                                 style="width:@(percentFull)%; background:@(isFull ? "var(--ep-danger)" : "var(--ep-primary)");">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ep-event-card-footer d-flex justify-content-between align-items-center">
+                        @if (isFull)
+                        {
+                            <span class="ep-badge ep-badge-full"><i class="bi bi-x-circle"></i> Full</span>
+                        }
+                        else
+                        {
+                            <span class="ep-badge ep-badge-open"><i class="bi bi-check-circle"></i> Open</span>
+                        }
+                        <NavLink href="@($"events/{ev.Id}")" class="btn-ep-primary">
+                            View Details <i class="bi bi-arrow-right"></i>
+                        </NavLink>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private bool loading = true;
+    private List<Event> events = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await Db.Events
+            .Include(e => e.Rsvps)
+            .AsNoTracking()
+            .ToListAsync();
+
+        loading = false;
+    }
+}

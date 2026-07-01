@@ -1,0 +1,236 @@
+@page "/events/{Id:int}"
+@using EventPulse.Data
+@using EventPulse.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>@(ev?.Title ?? "Event") - EventPulse</PageTitle>
+
+@if (loading)
+{
+    <div class="ep-spinner">
+        <div class="ep-spinner-circle"></div>
+        <span>Loading event...</span>
+    </div>
+}
+else if (ev is null)
+{
+    <div class="ep-card">
+        <div class="ep-card-body text-center">
+            <i class="bi bi-exclamation-triangle-fill text-ep-warning" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-0">Event not found.</p>
+            <NavLink href="events" class="btn-ep-outline mt-3 d-inline-flex">Back to Events</NavLink>
+        </div>
+    </div>
+}
+else
+{
+    var confirmed = ev.Rsvps.Where(r => !r.IsWaitlisted).OrderBy(r => r.Timestamp).ToList();
+    var waitlist = ev.Rsvps.Where(r => r.IsWaitlisted).OrderBy(r => r.Timestamp).ToList();
+    var isFull = confirmed.Count >= ev.MaxCapacity;
+
+    <div class="ep-page-header d-flex justify-content-between align-items-start">
+        <div>
+            <h2 class="ep-page-title">@ev.Title</h2>
+            <p class="ep-page-subtitle">
+                <i class="bi bi-calendar3 me-1"></i>@ev.Date.ToString("MMMM dd, yyyy - h:mm tt")
+            </p>
+        </div>
+        <NavLink href="events" class="btn-ep-outline"><i class="bi bi-arrow-left"></i> Back</NavLink>
+    </div>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div class="ep-toast @statusType mb-3" style="position:static; animation:none;">
+            <i class="bi @(statusType == "success" ? "bi-check-circle-fill" : "bi-info-circle-fill")"></i>
+            <span>@statusMessage</span>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Left: Description + RSVP form -->
+        <div class="col-lg-5">
+            <div class="ep-card mb-4">
+                <div class="ep-card-header">
+                    <h3 class="ep-card-title">About this event</h3>
+                </div>
+                <div class="ep-card-body">
+                    <p style="font-size:0.9rem; color:#4b5563;">@ev.Description</p>
+                    <div class="d-flex justify-content-between align-items-center mb-1" style="font-size:0.85rem;">
+                        <span class="fw-600">@confirmed.Count / @ev.MaxCapacity confirmed</span>
+                        @if (waitlist.Count > 0)
+                        {
+                            <span class="text-ep-warning">@waitlist.Count on waitlist</span>
+                        }
+                    </div>
+                    <div class="ep-capacity-bar">
+                        <div class="ep-capacity-fill"
+                             style="width:@(Math.Min(100, ev.MaxCapacity > 0 ? confirmed.Count * 100 / ev.MaxCapacity : 0))%;
+                                    background:@(isFull ? "var(--ep-danger)" : "var(--ep-primary)");">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ep-card">
+                <div class="ep-card-header">
+                    <h3 class="ep-card-title">
+                        @(isFull ? "Join the Waitlist" : "Register for this Event")
+                    </h3>
+                </div>
+                <div class="ep-card-body">
+                    <EditForm Model="newEmail" OnValidSubmit="HandleRsvp">
+                        <DataAnnotationsValidator />
+                        <label class="ep-form-label">Email address</label>
+                        <input type="email" class="ep-form-control mb-2"
+                               @bind="newEmail" placeholder="you@example.com" required />
+                        <ValidationMessage For="@(() => newEmail)" />
+
+                        <button type="submit" class="btn-ep-primary w-100 justify-content-center mt-2" disabled="@submitting">
+                            @if (isFull)
+                            {
+                                <span><i class="bi bi-hourglass-split"></i> Join Waitlist</span>
+                            }
+                            else
+                            {
+                                <span><i class="bi bi-check-circle"></i> Confirm Registration</span>
+                            }
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Attendee + Waitlist lists -->
+        <div class="col-lg-7">
+            <div class="ep-card mb-4">
+                <div class="ep-card-header">
+                    <h3 class="ep-card-title"><i class="bi bi-person-check-fill text-ep-success me-1"></i> Confirmed (@confirmed.Count)</h3>
+                </div>
+                <div class="ep-card-body p-0">
+                    @if (!confirmed.Any())
+                    {
+                        <p class="text-muted p-3 mb-0">No confirmed registrations yet.</p>
+                    }
+                    else
+                    {
+                        <table class="ep-table">
+                            <tbody>
+                                @foreach (var r in confirmed)
+                                {
+                                    <tr>
+                                        <td><i class="bi bi-envelope me-2 text-muted"></i>@r.UserEmail</td>
+                                        <td class="text-muted" style="font-size:0.8rem;">@r.Timestamp.ToString("MMM dd, h:mm tt")</td>
+                                        <td class="text-end">
+                                            <span class="ep-badge ep-badge-confirmed">Confirmed</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+
+            @if (waitlist.Any())
+            {
+                <div class="ep-card">
+                    <div class="ep-card-header">
+                        <h3 class="ep-card-title"><i class="bi bi-hourglass-split text-ep-warning me-1"></i> Waitlist (@waitlist.Count)</h3>
+                    </div>
+                    <div class="ep-card-body p-0">
+                        <table class="ep-table">
+                            <tbody>
+                                @foreach (var r in waitlist)
+                                {
+                                    <tr>
+                                        <td><i class="bi bi-envelope me-2 text-muted"></i>@r.UserEmail</td>
+                                        <td class="text-muted" style="font-size:0.8rem;">@r.Timestamp.ToString("MMM dd, h:mm tt")</td>
+                                        <td class="text-end">
+                                            <span class="ep-badge ep-badge-waitlist">Waiting</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Event? ev;
+    private bool loading = true;
+    private bool submitting = false;
+    private string newEmail = string.Empty;
+    private string statusMessage = string.Empty;
+    private string statusType = "success";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEvent();
+    }
+
+    private async Task LoadEvent()
+    {
+        loading = true;
+        ev = await Db.Events
+            .Include(e => e.Rsvps)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == Id);
+        loading = false;
+    }
+
+    private async Task HandleRsvp()
+    {
+        if (ev is null || string.IsNullOrWhiteSpace(newEmail)) return;
+
+        submitting = true;
+
+        // Prevent duplicate RSVPs from the same email for this event
+        bool alreadyRegistered = await Db.Rsvps
+            .AnyAsync(r => r.EventId == ev.Id && r.UserEmail.ToLower() == newEmail.ToLower());
+
+        if (alreadyRegistered)
+        {
+            statusMessage = "This email has already registered for this event.";
+            statusType = "danger";
+            submitting = false;
+            return;
+        }
+
+        // THE CORE WAITLIST LOGIC:
+        // Count only confirmed (non-waitlisted) RSVPs against MaxCapacity.
+        // Re-check against the database (not the stale in-memory list) to avoid race conditions.
+        int confirmedCount = await Db.Rsvps
+            .CountAsync(r => r.EventId == ev.Id && !r.IsWaitlisted);
+
+        bool willBeWaitlisted = confirmedCount >= ev.MaxCapacity;
+
+        var rsvp = new Rsvp
+        {
+            EventId = ev.Id,
+            UserEmail = newEmail.Trim(),
+            IsWaitlisted = willBeWaitlisted,
+            Timestamp = DateTime.UtcNow
+        };
+
+        Db.Rsvps.Add(rsvp);
+        await Db.SaveChangesAsync();
+
+        statusMessage = willBeWaitlisted
+            ? $"The event is full — {newEmail} has been added to the waitlist."
+            : $"{newEmail} is confirmed for this event!";
+        statusType = willBeWaitlisted ? "warning" : "success";
+
+        newEmail = string.Empty;
+        submitting = false;
+
+        await LoadEvent(); // refresh lists + capacity bar
+    }
+}

@@ -1,0 +1,97 @@
+﻿@inherits LayoutComponentBase
+
+<div class="ep-layout">
+
+    <!-- ── Sidebar ───────────────────────────────────────────────── -->
+    <aside class="ep-sidebar" id="epSidebar">
+
+        <div class="ep-sidebar-brand">
+            <p class="ep-brand-title">
+                <i class="bi bi-lightning-charge-fill" style="color:#818cf8"></i>
+                EventPulse
+            </p>
+            <p class="ep-brand-subtitle">Event Management Platform</p>
+        </div>
+
+        <nav class="ep-nav">
+            <div class="ep-nav-section">Main</div>
+
+            <NavLink class="ep-nav-link" href="" Match="NavLinkMatch.All">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </NavLink>
+
+            <NavLink class="ep-nav-link" href="events">
+                <i class="bi bi-calendar-event-fill"></i>
+                <span>All Events</span>
+            </NavLink>
+
+            <div class="ep-nav-section">Account</div>
+
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink class="ep-nav-link" href="admin">
+                        <i class="bi bi-shield-lock-fill"></i>
+                        <span>Admin Panel</span>
+                    </NavLink>
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="/" />
+                        <button type="submit" class="ep-nav-link w-100 border-0 text-start">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink class="ep-nav-link" href="Account/Login">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Login</span>
+                    </NavLink>
+                    <NavLink class="ep-nav-link" href="Account/Register">
+                        <i class="bi bi-person-plus-fill"></i>
+                        <span>Register</span>
+                    </NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </nav>
+
+        <div class="ep-sidebar-footer">
+            EventPulse v1.0 &copy; @DateTime.Now.Year
+        </div>
+    </aside>
+
+    <!-- ── Main Content ───────────────────────────────────────────── -->
+    <div class="ep-main">
+
+        <!-- Top Navbar -->
+        <header class="ep-navbar">
+            <h1 class="ep-navbar-title">
+                <i class="bi bi-lightning-charge text-ep-primary me-2"></i>
+                EventPulse
+            </h1>
+            <div class="ep-navbar-actions">
+                <AuthorizeView>
+                    <Authorized>
+                        <span style="font-size:0.82rem; color:#6b7280;">
+                            <i class="bi bi-person-circle me-1"></i>
+                            @context.User.Identity?.Name
+                        </span>
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="ep-content">
+            @Body
+        </main>
+
+        <!-- Footer -->
+        <footer class="ep-footer">
+            <span>EventPulse — Real-time Event Registration Platform</span>
+            <span>Built with .NET 8 &amp; Blazor</span>
+        </footer>
+
+    </div>
+</div>

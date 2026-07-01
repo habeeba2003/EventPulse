@@ -1,0 +1,24 @@
+# Build folders
+bin/
+obj/
+
+# IDE folders
+.vs/
+.vscode/
+.idea/
+
+# User files
+*.user
+*.suo
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

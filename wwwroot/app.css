@@ -1,0 +1,513 @@
+/* ── CSS Variables (Color Theme) ───────────────────────────────────────────── */
+:root {
+    --ep-primary: #4f46e5;       /* Indigo - main brand color */
+    --ep-primary-dark: #3730a3;  /* Darker indigo for hover states */
+    --ep-secondary: #7c3aed;     /* Purple accent */
+    --ep-success: #059669;       /* Green for confirmed seats */
+    --ep-warning: #d97706;       /* Amber for waitlist */
+    --ep-danger: #dc2626;        /* Red for errors */
+    --ep-sidebar-width: 260px;   /* Fixed sidebar width */
+    --ep-bg: #f8f9ff;            /* Light blue-grey background */
+    --ep-card-shadow: 0 2px 12px rgba(79, 70, 229, 0.08);
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--ep-bg);
+    color: #1e1b4b;
+}
+
+/* ── Layout Shell ───────────────────────────────────────────────────────────── */
+.ep-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────────────── */
+.ep-sidebar {
+    width: var(--ep-sidebar-width);
+    background: linear-gradient(160deg, #1e1b4b 0%, #312e81 100%);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.ep-sidebar-brand {
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.ep-brand-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.ep-brand-subtitle {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ep-nav {
+    padding: 1rem 0;
+    flex: 1;
+}
+
+.ep-nav-section {
+    padding: 0.5rem 1.25rem 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 0.75rem;
+}
+
+.ep-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.25rem;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 0;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    margin: 0.1rem 0;
+}
+
+.ep-nav-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+    border-left-color: rgba(255,255,255,0.3);
+}
+
+.ep-nav-link.active {
+    color: #fff;
+    background: rgba(99, 102, 241, 0.4);
+    border-left-color: #818cf8;
+}
+
+.ep-nav-link i {
+    font-size: 1rem;
+    width: 1.25rem;
+    text-align: center;
+}
+
+.ep-sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.35);
+}
+
+/* ── Main Content Area ──────────────────────────────────────────────────────── */
+.ep-main {
+    margin-left: var(--ep-sidebar-width);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ── Top Navbar ─────────────────────────────────────────────────────────────── */
+.ep-navbar {
+    background: #fff;
+    border-bottom: 1px solid #e0e7ff;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 1px 4px rgba(79,70,229,0.06);
+}
+
+.ep-navbar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e1b4b;
+    margin: 0;
+}
+
+.ep-navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ── Page Content ───────────────────────────────────────────────────────────── */
+.ep-content {
+    padding: 1.75rem;
+    flex: 1;
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────────────── */
+.ep-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--ep-card-shadow);
+    border: 1px solid #e0e7ff;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ep-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.12);
+}
+
+.ep-card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e7ff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafbff;
+}
+
+.ep-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e1b4b;
+    margin: 0;
+}
+
+.ep-card-body {
+    padding: 1.5rem;
+}
+
+/* ── Event Cards (Home Page) ────────────────────────────────────────────────── */
+.ep-event-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--ep-card-shadow);
+    border: 1px solid #e0e7ff;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ep-event-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.15);
+}
+
+.ep-event-card-header {
+    background: linear-gradient(135deg, var(--ep-primary) 0%, var(--ep-secondary) 100%);
+    padding: 1.25rem 1.5rem;
+    color: white;
+}
+
+.ep-event-card-body {
+    padding: 1.25rem 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ep-event-card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e7ff;
+    background: #fafbff;
+}
+
+/* ── Stat Cards (Dashboard) ─────────────────────────────────────────────────── */
+.ep-stat-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--ep-card-shadow);
+    border: 1px solid #e0e7ff;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ep-stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.ep-stat-icon.indigo  { background: #eef2ff; color: var(--ep-primary); }
+.ep-stat-icon.purple  { background: #f5f3ff; color: var(--ep-secondary); }
+.ep-stat-icon.green   { background: #ecfdf5; color: var(--ep-success); }
+.ep-stat-icon.amber   { background: #fffbeb; color: var(--ep-warning); }
+
+.ep-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e1b4b;
+    line-height: 1;
+}
+
+.ep-stat-label {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.2rem;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────────────────── */
+.ep-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.ep-badge-confirmed { background: #ecfdf5; color: var(--ep-success); }
+.ep-badge-waitlist  { background: #fffbeb; color: var(--ep-warning); }
+.ep-badge-full      { background: #fef2f2; color: var(--ep-danger);  }
+.ep-badge-open      { background: #eef2ff; color: var(--ep-primary); }
+
+/* ── Capacity Bar ───────────────────────────────────────────────────────────── */
+.ep-capacity-bar {
+    height: 6px;
+    background: #e0e7ff;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.4rem;
+}
+
+.ep-capacity-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────────── */
+.btn-ep-primary {
+    background: var(--ep-primary);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-ep-primary:hover {
+    background: var(--ep-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+}
+
+.btn-ep-outline {
+    background: transparent;
+    color: var(--ep-primary);
+    border: 1.5px solid var(--ep-primary);
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-ep-outline:hover {
+    background: var(--ep-primary);
+    color: #fff;
+}
+
+/* ── Toast Notifications ────────────────────────────────────────────────────── */
+.ep-toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ep-toast {
+    background: #fff;
+    border-radius: 10px;
+    padding: 0.9rem 1.2rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border-left: 4px solid var(--ep-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 280px;
+    animation: slideInRight 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.ep-toast.success { border-left-color: var(--ep-success); }
+.ep-toast.warning { border-left-color: var(--ep-warning); }
+.ep-toast.danger  { border-left-color: var(--ep-danger);  }
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+}
+
+/* ── Forms ──────────────────────────────────────────────────────────────────── */
+.ep-form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.35rem;
+    display: block;
+}
+
+.ep-form-control {
+    width: 100%;
+    padding: 0.55rem 0.9rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    background: #fff;
+}
+
+.ep-form-control:focus {
+    border-color: var(--ep-primary);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+}
+
+/* ── Page Header ────────────────────────────────────────────────────────────── */
+.ep-page-header {
+    margin-bottom: 1.75rem;
+}
+
+.ep-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e1b4b;
+    margin: 0 0 0.25rem;
+}
+
+.ep-page-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* ── Table ──────────────────────────────────────────────────────────────────── */
+.ep-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.ep-table th {
+    background: #f5f3ff;
+    color: #4338ca;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid #e0e7ff;
+}
+
+.ep-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #f0f0f8;
+    color: #374151;
+    vertical-align: middle;
+}
+
+.ep-table tr:hover td {
+    background: #fafbff;
+}
+
+/* ── Loading Spinner ────────────────────────────────────────────────────────── */
+.ep-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.ep-spinner-circle {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #e0e7ff;
+    border-top-color: var(--ep-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+.ep-footer {
+    background: #fff;
+    border-top: 1px solid #e0e7ff;
+    padding: 1rem 1.75rem;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .ep-sidebar {
+        transform: translateX(-100%);
+    }
+    .ep-sidebar.open {
+        transform: translateX(0);
+    }
+    .ep-main {
+        margin-left: 0;
+    }
+}
+
+/* ── Utility ────────────────────────────────────────────────────────────────── */
+.text-ep-primary  { color: var(--ep-primary) !important; }
+.text-ep-success  { color: var(--ep-success) !important; }
+.text-ep-warning  { color: var(--ep-warning) !important; }
+.text-ep-danger   { color: var(--ep-danger)  !important; }
+.fw-600 { font-weight: 600; }
+.fw-700 { font-weight: 700; }
+.gap-2  { gap: 0.5rem; }
